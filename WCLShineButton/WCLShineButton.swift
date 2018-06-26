@@ -52,9 +52,99 @@ public class WCLShineButton: UIControl {
     }
     
     /// button的图片
-    public var image: WCLShineImage = .heart {
+    @IBInspectable public var image: NSString = ".heart" {
         willSet {
-            clickLayer.image = newValue
+            switch newValue {
+            case ".heart":
+                clickLayer.image = .heart
+            case ".like":
+                clickLayer.image = .like
+            case ".smile":
+                clickLayer.image = .smile
+            case ".star":
+                clickLayer.image = .star
+            default:
+                clickLayer.image = .heart
+            }
+//            clickLayer.image = newValue
+        }
+    }
+    
+    @objc public var customImage: UIImage = UIImage() {
+        willSet {
+            let image = WCLShineImage.custom(newValue)
+            clickLayer.image = image
+        }
+    }
+    
+    @objc public var bigShineColor: UIColor = UIColor() {
+        willSet {
+            params.bigShineColor = newValue
+            shineLayer.params.bigShineColor = newValue
+        }
+    }
+    
+    @objc public var smallShineColor: UIColor = UIColor() {
+        willSet {
+            params.smallShineColor = newValue
+            shineLayer.params.smallShineColor = newValue
+        }
+    }
+    
+    @objc public var enableFlashing: Bool = Bool() {
+        willSet {
+            params.enableFlashing = newValue
+            shineLayer.params.enableFlashing = newValue
+        }
+    }
+    
+    @objc public var shineCount: Int = Int() {
+        willSet {
+            params.shineCount = newValue
+            shineLayer.params.shineCount = newValue
+        }
+    }
+    
+    @objc public var shineTurnAngle: Float = Float() {
+        willSet {
+            params.shineTurnAngle = newValue
+            shineLayer.params.shineTurnAngle = newValue
+        }
+    }
+    
+    @objc public var shineDistanceMultiple: Float = Float() {
+        willSet {
+            params.shineDistanceMultiple = newValue
+            shineLayer.params.shineDistanceMultiple = newValue
+        }
+    }
+    
+    @objc public var animDuration: Double = Double() {
+        willSet {
+            params.animDuration = newValue
+            shineLayer.params.animDuration = newValue
+            clickLayer.animDuration = newValue/3
+        }
+    }
+    
+    @objc public var allowRandomColor: Bool = Bool() {
+        willSet {
+            params.allowRandomColor = newValue
+            shineLayer.params.allowRandomColor = newValue
+        }
+    }
+    
+    @objc public var smallShineOffsetAngle: Float = Float() {
+        willSet {
+            params.shineTurnAngle = newValue
+            shineLayer.params.shineTurnAngle = newValue
+        }
+    }
+    
+    @objc public var shineSize: Float = Float() {
+        willSet {
+            params.shineTurnAngle = newValue
+            shineLayer.params.shineTurnAngle = newValue
         }
     }
     
@@ -63,6 +153,11 @@ public class WCLShineButton: UIControl {
         didSet {
             clickLayer.clicked = isSelected
         }
+    }
+
+    @IBInspectable public var getSelection: Bool {
+        print("Clicked: \(clickLayer.clicked)")
+        return clickLayer.clicked
     }
     
     private var clickLayer = WCLShineClickLayer()
@@ -89,6 +184,7 @@ public class WCLShineButton: UIControl {
         initLayers()
     }
     
+    @objc
     public func setClicked(_ clicked: Bool, animated: Bool = true) {
         guard clicked != clickLayer.clicked else {
             return
@@ -117,11 +213,12 @@ public class WCLShineButton: UIControl {
         super.touchesEnded(touches, with: event)
         if clickLayer.clicked == false {
             shineLayer.endAnim = { [weak self] in
-                self?.clickLayer.clicked = !(self?.clickLayer.clicked ?? false)
+//                self?.clickLayer.clicked = !(self?.clickLayer.clicked ?? false)
                 self?.clickLayer.startAnim()
-                self?.isSelected = self?.clickLayer.clicked ?? false
+//                self?.isSelected = self?.clickLayer.clicked ?? false
                 self?.sendActions(for: .valueChanged)
             }
+            clickLayer.clicked = true
             shineLayer.startAnim()
         }else {
             clickLayer.clicked = !clickLayer.clicked
@@ -131,7 +228,8 @@ public class WCLShineButton: UIControl {
     }
     
     //MARK: Privater Methods
-    private func initLayers() {
+    @objc
+    public func initLayers() {
         clickLayer.animDuration = params.animDuration/3
         shineLayer.params       = params
         clickLayer.frame = bounds
